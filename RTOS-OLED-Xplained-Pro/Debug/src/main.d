@@ -1,5 +1,6 @@
-src/main.d src/main.o: ../src/main.c ../src/asf.h \
- ../src/ASF/sam/drivers/afec/afec.h ../src/ASF/sam/utils/compiler.h \
+src/main.d src/main.o: ../src/main.c ../src/config/conf_board.h \
+ ../src/asf.h ../src/ASF/sam/drivers/afec/afec.h \
+ ../src/ASF/sam/utils/compiler.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\lib\gcc\arm-none-eabi\6.3.1\include\stddef.h \
  ../src/ASF/common/utils/parts.h \
  ../src/ASF/sam/utils/preprocessor/preprocessor.h \
@@ -194,12 +195,14 @@ src/main.d src/main.o: ../src/main.c ../src/asf.h \
  ../src/ASF/common/services/serial/sam_uart/uart_serial.h \
  ../src/ASF/sam/drivers/uart/uart.h ../src/ASF/sam/drivers/usart/usart.h \
  ../src/config/conf_uart_serial.h ../src/ASF/sam/drivers/tc/tc.h \
- ../src/ASF/sam/drivers/pio/pio_handler.h ../src/config/conf_board.h \
+ ../src/ASF/sam/drivers/pio/pio_handler.h \
  ../src/oled/gfx_mono_ug_2832hsweg04.h ../src/oled/ssd1306.h \
  ../src/oled/gfx_mono.h ../src/oled/gfx_mono_ug_2832hsweg04.h \
  ../src/oled/gfx_mono_generic.h ../src/oled/gfx_mono_framebuffer.h \
  ../src/oled/gfx_mono_text.h ../src/oled/sysfont.h \
  ../src/config/conf_sysfont.h ../src/oled/gfx_mono_text.h
+
+../src/config/conf_board.h:
 
 ../src/asf.h:
 
@@ -608,8 +611,6 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 ../src/ASF/sam/drivers/tc/tc.h:
 
 ../src/ASF/sam/drivers/pio/pio_handler.h:
-
-../src/config/conf_board.h:
 
 ../src/oled/gfx_mono_ug_2832hsweg04.h:
 
