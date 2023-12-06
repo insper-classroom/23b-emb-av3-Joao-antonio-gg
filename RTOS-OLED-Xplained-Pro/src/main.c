@@ -192,9 +192,9 @@ static void task_color (void *pvParameters){
 	/* Timer callback */
 	vTimerCallback);
 	xTimerStart(xTimer, 0);
-	int but1 = 0;
-	int but2 = 0;
-	int but3 = 0;
+	int but1 ;
+	int but2 ;
+	int but3 ;
 	int valor;
 
 	for(;;){
