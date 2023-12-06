@@ -21,10 +21,20 @@
 #define LED_3_IDX 2
 #define LED_3_IDX_MASK (1 << LED_3_IDX)
 
-#define LED_R_PIO PIOB
-#define LED_R_PIO_ID ID_PIOB
-#define LED_R_IDX 2
-#define LED_R_IDX_MASK (1 << LED_3_IDX)
+#define LED_R_PIO PIOD
+#define LED_R_PIO_ID ID_PIOD
+#define LED_R_IDX 27
+#define LED_R_IDX_MASK (1 << LED_R_IDX)
+
+#define LED_G_PIO PIOA
+#define LED_G_PIO_ID ID_PIOA
+#define LED_G_IDX 21
+#define LED_G_IDX_MASK (1 << LED_G_IDX)
+
+#define LED_B_PIO PIOA
+#define LED_B_PIO_ID ID_PIOA
+#define LED_B_IDX 6
+#define LED_B_IDX_MASK (1 << LED_B_IDX)
 
 #define BUT_1_PIO PIOD
 #define BUT_1_PIO_ID ID_PIOD
@@ -86,6 +96,8 @@ extern void vApplicationMallocFailedHook(void) {
 QueueHandle_t xQueueBtn;
 QueueHandle_t xQueueAFEC;
 QueueHandle_t xQueueR;
+QueueHandle_t xQueueG;
+QueueHandle_t xQueueB;
 /************************************************************************/
 /* handlers / callbacks                                                 */
 /************************************************************************/
@@ -194,7 +206,7 @@ static void task_color (void *pvParameters){
 	xTimerStart(xTimer, 0);
 	int but1 ;
 	int but2 ;
-	int but3 ;
+	int but3;
 	int valor;
 
 	for(;;){
@@ -206,26 +218,26 @@ static void task_color (void *pvParameters){
 				if (but.status == 1){
 					but1 = 1;
 					pio_clear(LED_1_PIO, LED_1_IDX_MASK);
-					delay_ms(100);
+				//	delay_ms(100);
 				}
 				if (but.status == 0){
 					but1 = 0;
 					pio_set(LED_1_PIO, LED_1_IDX_MASK);
 					
-					delay_ms(100);
+				//	delay_ms(100);
 				}
 			}
 			if (but.id == 2){
 				if (but.status == 1){
 					but2 = 1;
 					pio_clear(LED_2_PIO, LED_2_IDX_MASK);
-					delay_ms(100);
+					//delay_ms(100);
 				}
 				if (but.status == 0){
 					but2 = 0;
 					pio_set(LED_2_PIO, LED_2_IDX_MASK);
 					
-					delay_ms(100);
+					//delay_ms(100);
 				}
 			}
 			
@@ -233,35 +245,80 @@ static void task_color (void *pvParameters){
 				if (but.status == 1){
 					but3 = 1;
 					pio_clear(LED_3_PIO, LED_3_IDX_MASK);
-					delay_ms(100);
+					//delay_ms(100);
 				}
 				if (but.status == 0){
 					but3 = 0;
 					pio_set(LED_3_PIO, LED_3_IDX_MASK);
-					delay_ms(100);
+					//delay_ms(100);
 				}
 			}
 		}
-// 		if (but1 == 1 ){
-// 			
-// 			printf("Afec %d \n",valor);
-// 
-// 			delay_ms(150);
-// 			
-// 		}
-// 		if (but2 == 1 ){
-// 			printf("Afec %d \n",valor);
-// 			delay_ms(150);
-// 		}
-// 		if (but3 == 1){
-// 			printf("Afec %d \n",valor);
-// 			delay_ms(150);
-// 		}
+		if (but1 == 1 ){
+			
+			xQueueSend(xQueueR, &valor, 0);
+			//delay_ms(150);
+			
+		}
+		if (but2 == 1 ){
+			xQueueSend(xQueueG, &valor, 0);
+			//delay_ms(150);
+		}
+		if (but3 == 1){
+			xQueueSend(xQueueB, &valor, 0);
+			//delay_ms(150);
+		}
 	}
 }
 
 static void task_led_r (void *pvParameters){
+	int fila = 0; 
+	while(1){
+		if( xQueueReceive( xQueueR, &fila, ( TickType_t ) 0 )){
+						printf("Afec r %d \n",fila);
 
+		}
+		
+			pio_set(LED_R_PIO, LED_R_IDX_MASK);
+			delay_ms(fila);
+			pio_clear(LED_R_PIO, LED_R_IDX_MASK);
+			delay_ms(20-fila);
+		
+		
+	}
+}
+static void task_led_g (void *pvParameters){
+	int fila2 = 0;
+	while(1){
+		if( xQueueReceive(xQueueG, &fila2, ( TickType_t ) 0 )){
+						printf("Afec g %d \n",fila2);
+
+		}
+	
+		pio_set(LED_G_PIO, LED_G_IDX_MASK);
+		delay_ms(fila2);
+		pio_clear(LED_G_PIO, LED_G_IDX_MASK);
+		delay_ms(20-fila2);
+		
+		
+	}
+}
+
+static void task_led_b (void *pvParameters){
+	int fila3 = 0;
+	while(1){
+		if( xQueueReceive( xQueueB, &fila3, ( TickType_t ) 0 )){
+						printf("Afec b %d \n",fila3);
+
+		}
+		
+		pio_set(LED_B_PIO, LED_B_IDX_MASK);
+		delay_ms(fila3);
+		pio_clear(LED_B_PIO, LED_B_IDX_MASK);
+		delay_ms(20-fila3);
+		
+		
+	}
 }
 /************************************************************************/
 /* funcoes                                                              */
@@ -336,7 +393,10 @@ void io_init(void) {
 	pio_configure(LED_1_PIO, PIO_OUTPUT_0, LED_1_IDX_MASK, PIO_DEFAULT);
 	pio_configure(LED_2_PIO, PIO_OUTPUT_0, LED_2_IDX_MASK, PIO_DEFAULT);
 	pio_configure(LED_3_PIO, PIO_OUTPUT_0, LED_3_IDX_MASK, PIO_DEFAULT);
-
+	pio_configure(LED_R_PIO, PIO_OUTPUT_0, LED_R_IDX_MASK, PIO_DEFAULT);
+	pio_configure(LED_G_PIO, PIO_OUTPUT_0, LED_G_IDX_MASK, PIO_DEFAULT);
+	pio_configure(LED_B_PIO, PIO_OUTPUT_0, LED_B_IDX_MASK, PIO_DEFAULT);
+	
 	pio_configure(BUT_1_PIO, PIO_INPUT, BUT_1_IDX_MASK,
 	PIO_PULLUP | PIO_DEBOUNCE);
 	pio_configure(BUT_2_PIO, PIO_INPUT, BUT_2_IDX_MASK,
@@ -389,7 +449,18 @@ int main(void) {
 	if (xQueueAFEC == NULL){
 		printf("falha em criar a fila \n");
 	}
-	
+	xQueueR = xQueueCreate(1, sizeof(int));
+	if (xQueueR == NULL){
+		printf("falha em criar a fila \n");
+	}
+	xQueueG = xQueueCreate(1, sizeof(int));
+	if (xQueueG == NULL){
+		printf("falha em criar a fila \n");
+	}
+	xQueueB = xQueueCreate(1, sizeof(int));
+	if (xQueueB == NULL){
+		printf("falha em criar a fila \n");
+	}
 	if (xTaskCreate(task_oled, "oled", TASK_OLED_STACK_SIZE, NULL,
 	TASK_OLED_STACK_PRIORITY, NULL) != pdPASS) {
 		printf("Failed to create oled task\r\n");
@@ -399,6 +470,12 @@ int main(void) {
 	}
 	if (xTaskCreate(task_led_r, "color", 1024, NULL, 0, NULL) != pdPASS) {
 		printf("Failed to create led_r task\r\n");
+	}
+	if (xTaskCreate(task_led_g, "color", 1024, NULL, 0, NULL) != pdPASS) {
+		printf("Failed to create led_g task\r\n");
+	}
+	if (xTaskCreate(task_led_b, "color", 1024, NULL, 0, NULL) != pdPASS) {
+		printf("Failed to create led_b task\r\n");
 	}
 	vTaskStartScheduler();
 	while (1) {
